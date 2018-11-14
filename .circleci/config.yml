@@ -7,4 +7,4 @@ jobs:
     steps:
     - checkout
     - run: go get -v
-    - run: go test -v ./...
+    - run: go build -v
