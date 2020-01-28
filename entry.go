@@ -182,12 +182,22 @@ func getCaller() *runtime.Frame {
 	depth := runtime.Callers(minimumCallerDepth, pcs)
 	frames := runtime.CallersFrames(pcs[:depth])
 
+	last := false
 	for f, again := frames.Next(); again; f, again = frames.Next() {
 		pkg := getPackageName(f.Function)
 
+		if last {
+			return &f
+		}
+
 		// If the caller isn't part of this package, we're done
 		if pkg != logrusPackage {
-			return &f //nolint:scopelint
+			if pkg == "github.com/tufin/orca/util/log" {
+				last = true
+				continue
+			}
+
+			return &f
 		}
 	}
 
